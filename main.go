@@ -71,8 +71,9 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	})
 
 	cloudrunserviceiampolicy.NewCloudRunServiceIamPolicy(stack, jsii.String("cloud_run_policy"), &cloudrunserviceiampolicy.CloudRunServiceIamPolicyConfig{
-		Service:    cloudRunService.Name(),
+		Location:   jsii.String(region),
 		PolicyData: policyData.PolicyData(),
+		Service:    cloudRunService.Name(),
 	})
 
 	return stack
