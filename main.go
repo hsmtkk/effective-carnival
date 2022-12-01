@@ -64,10 +64,10 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	})
 
 	policyData := datagoogleiampolicy.NewDataGoogleIamPolicy(stack, jsii.String("policy_data"), &datagoogleiampolicy.DataGoogleIamPolicyConfig{
-		Binding: &datagoogleiampolicy.DataGoogleIamPolicyBinding{
+		Binding: []*datagoogleiampolicy.DataGoogleIamPolicyBinding{{
 			Role:    jsii.String("roles/run.invoker"),
 			Members: &[]*string{jsii.String("allUsers")},
-		},
+		}},
 	})
 
 	cloudrunserviceiampolicy.NewCloudRunServiceIamPolicy(stack, jsii.String("cloud_run_policy"), &cloudrunserviceiampolicy.CloudRunServiceIamPolicyConfig{
