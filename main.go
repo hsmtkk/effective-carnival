@@ -6,7 +6,10 @@ import (
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/artifactregistryrepository"
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/cloudbuildtrigger"
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/cloudrunservice"
+	"github.com/cdktf/cdktf-provider-google-go/google/v4/cloudrunserviceiampolicy"
+	"github.com/cdktf/cdktf-provider-google-go/google/v4/datagoogleiampolicy"
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/provider"
+	"github.com/cdktf/cdktf-provider-google-go/google/v4/serviceaccount"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
 )
 
@@ -41,7 +44,12 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		},
 	})
 
-	cloudrunservice.NewCloudRunService(stack, jsii.String("cloud_run_service"), &cloudrunservice.CloudRunServiceConfig{
+	cloudRunWorker := serviceaccount.NewServiceAccount(stack, jsii.String("cloud_run_worker"), &serviceaccount.ServiceAccountConfig{
+		AccountId:   jsii.String("cloud-run-worker"),
+		DisplayName: jsii.String("service account for Cloud Run"),
+	})
+
+	cloudRunService := cloudrunservice.NewCloudRunService(stack, jsii.String("cloud_run_service"), &cloudrunservice.CloudRunServiceConfig{
 		AutogenerateRevisionName: true,
 		Location:                 jsii.String(region),
 		Name:                     jsii.String("example"),
@@ -50,8 +58,21 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 				Containers: []*cloudrunservice.CloudRunServiceTemplateSpecContainers{{
 					Image: jsii.String("us-docker.pkg.dev/cloudrun/container/hello"),
 				}},
+				ServiceAccountName: cloudRunWorker.Email(),
 			},
 		},
+	})
+
+	policyData := datagoogleiampolicy.NewDataGoogleIamPolicy(stack, jsii.String("policy_data"), &datagoogleiampolicy.DataGoogleIamPolicyConfig{
+		Binding: &datagoogleiampolicy.DataGoogleIamPolicyBinding{
+			Role:    jsii.String("roles/run.invoker"),
+			Members: &[]*string{jsii.String("allUsers")},
+		},
+	})
+
+	cloudrunserviceiampolicy.NewCloudRunServiceIamPolicy(stack, jsii.String("cloud_run_policy"), &cloudrunserviceiampolicy.CloudRunServiceIamPolicyConfig{
+		Service:    cloudRunService.Name(),
+		PolicyData: policyData.PolicyData(),
 	})
 
 	return stack
