@@ -3,8 +3,9 @@ steps:
   - name: sdesbure/yamllint
     id: yamllint
     waitFor: ['-']
+    entrypoint: yamllint
     args:
-      - /workspace/cloudbuild.yaml
+      - cloudbuild.yaml
 
   - name: asia-northeast1-docker.pkg.dev/effective-carnival/registry/staticcheck
     id: staticcheck
