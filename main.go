@@ -52,7 +52,7 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 		DisplayName: jsii.String("service account for Cloud Run"),
 	})
 
-	projectiambinding.NewProjectIamBinding(stack, jsii.String(""), &projectiambinding.ProjectIamBindingConfig{
+	projectiambinding.NewProjectIamBinding(stack, jsii.String("allow_cloud_profiler"), &projectiambinding.ProjectIamBindingConfig{
 		Project: jsii.String(project),
 		Role:    jsii.String("roles/cloudprofiler.agent"),
 		Members: &[]*string{jsii.String(fmt.Sprintf("serviceAccount:%s", *cloudRunWorker.Email()))},
