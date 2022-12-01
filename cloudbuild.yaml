@@ -4,7 +4,7 @@ steps:
     id: yamllint
     waitFor: ['-']
     args:
-      - cloudbuild.yaml
+      - /workspace/cloudbuild.yaml
 
   - name: asia-northeast1-docker.pkg.dev/effective-carnival/registry/staticcheck
     id: staticcheck
