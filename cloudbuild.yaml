@@ -1,0 +1,17 @@
+steps:
+  - name: asia-northeast1-docker.pkg.dev/effective-carnival/registry/staticcheck
+    id: staticcheck
+    waitFor: ['-']
+    entrypoint: staticcheck
+    args:
+      - ./...
+
+  - name: gcr.io/kaniko-project/executor:latest
+    id: docker
+    waitFor: ['-']
+    args:
+      - --cache=true
+      - --cache-ttl=168h
+      - --context=helloworld
+      - --destination=asia-northeast1-docker.pkg.dev/effective-carnival/registry/helloworld:$COMMIT_SHA
+      - --destination=asia-northeast1-docker.pkg.dev/effective-carnival/registry/helloworld:latest
