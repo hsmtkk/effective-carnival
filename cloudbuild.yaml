@@ -7,6 +7,13 @@ steps:
     args:
       - cloudbuild.yaml
 
+  - name: hadolint/hadolint
+    id: hadolint
+    waitFor: ['-']
+    entrypoint: hadolint
+    args:
+      - helloworld/Dockerfile
+
   - name: asia-northeast1-docker.pkg.dev/effective-carnival/registry/staticcheck
     id: staticcheck
     waitFor: ['-']
