@@ -9,12 +9,18 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/labstack/echo/v4/middleware"
+
+	"cloud.google.com/go/profiler"
 )
 
 func main() {
 	port, err := strconv.Atoi(os.Getenv("PORT"))
 	if err != nil {
 		log.Fatalf("strconv.Atoi failed; %v", err.Error())
+	}
+
+	if err := profiler.Start(profiler.Config{}); err != nil {
+		log.Fatalf("profiler.Start failed; %v", err.Error())
 	}
 
 	// Echo instance

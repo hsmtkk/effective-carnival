@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/aws/constructs-go/constructs/v10"
 	"github.com/aws/jsii-runtime-go"
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/artifactregistryrepository"
@@ -8,6 +10,7 @@ import (
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/cloudrunservice"
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/cloudrunserviceiampolicy"
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/datagoogleiampolicy"
+	"github.com/cdktf/cdktf-provider-google-go/google/v4/projectiambinding"
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/provider"
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/serviceaccount"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
@@ -47,6 +50,12 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 	cloudRunWorker := serviceaccount.NewServiceAccount(stack, jsii.String("cloud_run_worker"), &serviceaccount.ServiceAccountConfig{
 		AccountId:   jsii.String("cloud-run-worker"),
 		DisplayName: jsii.String("service account for Cloud Run"),
+	})
+
+	projectiambinding.NewProjectIamBinding(stack, jsii.String(""), &projectiambinding.ProjectIamBindingConfig{
+		Project: jsii.String(project),
+		Role:    jsii.String("roles/cloudprofiler.agent"),
+		Members: &[]*string{jsii.String(fmt.Sprintf("serviceAccount:%s", *cloudRunWorker.Email()))},
 	})
 
 	cloudRunService := cloudrunservice.NewCloudRunService(stack, jsii.String("cloud_run_service"), &cloudrunservice.CloudRunServiceConfig{
