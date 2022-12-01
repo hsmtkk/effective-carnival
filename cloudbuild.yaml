@@ -12,6 +12,8 @@ steps:
     waitFor: ['-']
     entrypoint: hadolint
     args:
+      - --ignore
+      - DL3006
       - helloworld/Dockerfile
 
   - name: asia-northeast1-docker.pkg.dev/effective-carnival/registry/staticcheck
