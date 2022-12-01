@@ -5,6 +5,7 @@ import (
 	"github.com/aws/jsii-runtime-go"
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/artifactregistryrepository"
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/cloudbuildtrigger"
+	"github.com/cdktf/cdktf-provider-google-go/google/v4/cloudrunservice"
 	"github.com/cdktf/cdktf-provider-google-go/google/v4/provider"
 	"github.com/hashicorp/terraform-cdk-go/cdktf"
 )
@@ -36,6 +37,19 @@ func NewMyStack(scope constructs.Construct, id string) cdktf.TerraformStack {
 			Owner: jsii.String(owner),
 			Push: &cloudbuildtrigger.CloudbuildTriggerGithubPush{
 				Branch: jsii.String("main"),
+			},
+		},
+	})
+
+	cloudrunservice.NewCloudRunService(stack, jsii.String("cloud_run_service"), &cloudrunservice.CloudRunServiceConfig{
+		AutogenerateRevisionName: true,
+		Location:                 jsii.String(region),
+		Name:                     jsii.String("example"),
+		Template: &cloudrunservice.CloudRunServiceTemplate{
+			Spec: &cloudrunservice.CloudRunServiceTemplateSpec{
+				Containers: []*cloudrunservice.CloudRunServiceTemplateSpecContainers{{
+					Image: jsii.String("us-docker.pkg.dev/cloudrun/container/hello"),
+				}},
 			},
 		},
 	})

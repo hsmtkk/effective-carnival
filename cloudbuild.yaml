@@ -1,4 +1,11 @@
+---
 steps:
+  - name: sdesbure/yamllint
+    id: yamllint
+    waitFor: ['-']
+    args:
+      - cloudbuild.yaml
+
   - name: asia-northeast1-docker.pkg.dev/effective-carnival/registry/staticcheck
     id: staticcheck
     waitFor: ['-']
@@ -15,3 +22,20 @@ steps:
       - --context=helloworld
       - --destination=asia-northeast1-docker.pkg.dev/effective-carnival/registry/helloworld:$COMMIT_SHA
       - --destination=asia-northeast1-docker.pkg.dev/effective-carnival/registry/helloworld:latest
+
+  - name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    id: deploy
+    waitFor: ['docker']
+    entrypoint: gcloud
+    args:
+      - run
+      - deploy
+      - example
+      - --image
+      - asia-northeast1-docker.pkg.dev/effective-carnival/registry/helloworld:$COMMIT_SHA
+      - --region
+      - asia-northeast1
+      - --min-instances
+      - "0"
+      - --max-instances
+      - "1"
